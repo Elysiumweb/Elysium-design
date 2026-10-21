@@ -94,18 +94,13 @@ firebase deploy --only firestore:rules
 ### 3.2 Authentification
 
 - **E-mail/mot de passe** : actif immédiatement (Firebase Console > Authentication > Sign-in method).
-- **Google** : le code est prêt mais nécessite 3 manipulations dans Firebase Console :
-  1. Authentication > Sign-in method > **Google > Activer** ;
-  2. Ajouter le **SHA-1** du keystore (debug : `./gradlew signingReport`) ;
-  3. Récupérer le **Web client ID** (Authentication > Sign-in method > Google) et le coller dans
-     `app/src/main/res/values/strings.xml` :
+- **Google** : ✅ configuré (SHA-1 enregistré, web client ID intégré dans `strings.xml`,
+  `google-services.json` à jour). Le bouton « Continuer avec Google » est actif.
 
-```xml
-<string name="google_web_client_id" translatable="false">xxxx.apps.googleusercontent.com</string>
-```
-
-Tant que ce champ est vide, le bouton Google affiche un message explicite et
-l'e-mail/mot de passe reste fonctionnel.
+> ⚠️ **Avant de publier la version release** : le SHA-1 actuel correspond à ton keystore de
+> debug. Ajoute aussi le SHA-1 du **keystore de release** dans Firebase Console
+> (Paramètres du projet > Vos applications), puis re-télécharge `google-services.json`
+> dans `app/` — sinon la connexion Google échouera sur le build publié.
 
 ### 3.3 Remote Config (optionnel)
 
@@ -140,7 +135,8 @@ embarqué dans l'app Android (il est ignoré par `.gitignore`). Il ne sert qu'à
 - [x] Identifiants AdMob intégrés (§2) — production dans `release`, test dans `debug`
 - [ ] **Publier `app-ads.txt`** à la racine du domaine développeur et vérifier la validation
    dans AdMob (onglet app-ads.txt, ~24 h) — §2.1
-- [ ] Activer Google Sign-In + SHA-1 + web client ID (§3.2) si souhaité
+- [x] Google Sign-In activé (§3.2) — ajouter le SHA-1 du keystore release + nouveau
+   `google-services.json` avant la mise en ligne
 - [ ] Déployer `firestore.rules` (§3.1)
 - [ ] Créer le produit `remove_ads` (§4)
 - [ ] Remplacer les URLs légales dans `SettingsScreen.kt` (`PRIVACY_URL`, `TERMS_URL`)

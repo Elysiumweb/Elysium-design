@@ -4,8 +4,7 @@
 
     <!--
       Web client ID Google (Firebase Console > Authentication > Sign-in method > Google).
-      Tant que ce champ est vide, seul l'auth e-mail/mot de passe est actif ;
-      le bouton Google affiche un message explicite. Voir README.
+      Configuré : le bouton Google est actif.
     -->
-    <string name="google_web_client_id" translatable="false"></string>
+    <string name="google_web_client_id" translatable="false">202208605466-9pe1kuq1kknnjaouhl9hi7dhml6m30r6.apps.googleusercontent.com</string>
 </resources>
