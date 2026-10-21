@@ -26,13 +26,9 @@ android {
         versionName = "1.0.0"
 
         // ==================== CONFIGURATION ADMOB ====================
-        // ⚠️ IDs de TEST officiels Google : ils servent des annonces de test.
-        // AVANT LA PUBLICATION : remplacez ces 4 valeurs par vos identifiants AdMob
-        // (AdMob > Paramètres > Applications, et AdMob > Unités de publicité).
-        buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
-        buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
-        buildConfigField("String", "ADMOB_REWARDED_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
-        manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+        // Compte AdMob : pub-5316598937383510
+        // - build DEBUG   : IDs de TEST Google (annonces de test, zéro risque de clics invalides)
+        // - build RELEASE : vos IDs de production (voir buildTypes ci-dessous)
         // =============================================================
 
         // Mettre true pour simuler un utilisateur EEA pendant les tests du consentement UMP
@@ -42,6 +38,12 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+
+            // ---- IDs de TEST Google (annonces de test uniquement) ----
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
         }
         release {
             isMinifyEnabled = true
@@ -50,6 +52,16 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // ---- IDs de production (compte AdMob pub-5316598937383510) ----
+            // Bannière      : ca-app-pub-5316598937383510/2509620902
+            // Interstitiel  : ca-app-pub-5316598937383510/8487696736
+            // Avec récompense : ca-app-pub-5316598937383510/3865925440
+            buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-5316598937383510/2509620902\"")
+            buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-5316598937383510/8487696736\"")
+            buildConfigField("String", "ADMOB_REWARDED_ID", "\"ca-app-pub-5316598937383510/3865925440\"")
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-5316598937383510~9596939280"
+
             // TODO publication : configurer le keystore de signature (Play Console > App signing)
             // signingConfig = signingConfigs.getByName("release")
         }

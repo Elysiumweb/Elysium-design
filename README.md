@@ -31,27 +31,48 @@ publié sur Google Play.
 
 ---
 
-## 2. Configuration AdMob (obligatoire avant publication)
+## 2. Configuration AdMob ✅ (intégré)
 
-Dans `app/build.gradle.kts`, bloc `defaultConfig`, remplacer les **4 valeurs de test**
-par vos identifiants AdMob ([AdMob > Paramètres > Applications](https://apps.admob.com)) :
+Compte AdMob : **pub-5316598937383510**. Les identifiants sont câblés dans `app/build.gradle.kts` :
 
-```kotlin
-buildConfigField("String", "ADMOB_BANNER_ID", "\"ca-app-pub-XXXX/BBBBBBBBBB\"")
-buildConfigField("String", "ADMOB_INTERSTITIAL_ID", "\"ca-app-pub-XXXX/IIIIIIIIII\"")
-buildConfigField("String", "ADMOB_REWARDED_ID", "\"ca-app-pub-XXXX/RRRRRRRRRR\"")
-manifestPlaceholders["admobAppId"] = "ca-app-pub-XXXX~NNNNNNNNNN"
+| Format | ID d'unité de publicité | Usage dans le jeu |
+|---|---|---|
+| **Bannière** | `ca-app-pub-5316598937383510/2509620902` | Menus uniquement (menu, boutique, paramètres, fin de partie) |
+| **Interstitiel** | `ca-app-pub-5316598937383510/8487696736` | Écran de fin de partie |
+| **Avec récompense** | `ca-app-pub-5316598937383510/3865925440` | « Continuer » après un crash (1×/partie) · « Doubler les étoiles » |
+
+ID d'application : `ca-app-pub-5316598937383510~9596939280`
+
+**Répartition par build** (recommandée par Google) :
+
+- **`debug`** (Run ▶ dans Android Studio) → **IDs de test Google** : annonces de test uniquement,
+  aucun risque de clics invalides pendant le développement (un clic sur une vraie pub en test
+  peut faire bannir le compte AdMob).
+- **`release`** (`assembleRelease` / `bundleRelease`, celui publié sur le Play Store) → **vos IDs de production**.
+
+Règles d'intégration respectées (Règles AdMob) : la bannière n'apparaît jamais pendant le jeu,
+l'interstitiel est plafonné et n'apparaît qu'à une pause naturelle, la vidéo récompensée est
+toujours facultative avec un bénéfice annoncé. Si aucune publicité n'est disponible, le jeu
+continue sans blocage avec un message discret.
+
+### 2.1 Fichier app-ads.txt (obligatoire)
+
+Le fichier [`app-ads.txt`](app-ads.txt) est prêt à la racine du dépôt :
+
+```
+google.com, pub-5316598937383510, DIRECT, f08c47fec0942fa0
 ```
 
-Unités de publicité à créer dans AdMob :
+À publier **à la racine du domaine développeur** déclaré dans Google Play (et non dans un
+sous-dossier), par exemple `https://elysiumweb.github.io/app-ads.txt` ou
+`https://votredomaine.com/app-ads.txt` :
 
-| Format | Usage dans le jeu | Règles |
-|---|---|---|
-| **Bannière** | Menus uniquement (menu, boutique, paramètres, fin de partie) | Zone réservée 50 dp, jamais pendant le jeu |
-| **Interstitiel** | Écran de fin de partie | Jamais la 1re session, jamais les 2 premières minutes, min. 60 s entre 2 affichages, 1 tous les 3 game-overs (réglable via Remote Config) |
-| **Avec récompense** | « Continuer » après un crash (1×/partie) · « Doubler les étoiles » | Toujours choisie par le joueur, bénéfice annoncé avant |
+1. Copier `app-ads.txt` à la racine du site (pour GitHub Pages : dans le dépôt qui publie
+   la racine du domaine, ex. `elysiumweb.github.io`, ou sur votre domaine personnalisé).
+2. Vérifier qu'il est accessible dans un navigateur : `https://<votre-domaine>/app-ads.txt`.
+3. Attendre **24 h** (crawl AdMob), puis vérifier l'onglet **app-ads.txt** dans AdMob.
 
-Si aucune publicité n'est disponible, le jeu continue sans blocage avec un message discret.
+Sans ce fichier, AdMob peut limiter la diffusion des annonces (revenus réduits).
 
 ---
 
@@ -116,7 +137,9 @@ embarqué dans l'app Android (il est ignoré par `.gitignore`). Il ne sert qu'à
 
 ## 5. Avant la publication — checklist Play Store
 
-- [ ] Remplacer les 4 identifiants AdMob de test par les vrais (§2)
+- [x] Identifiants AdMob intégrés (§2) — production dans `release`, test dans `debug`
+- [ ] **Publier `app-ads.txt`** à la racine du domaine développeur et vérifier la validation
+   dans AdMob (onglet app-ads.txt, ~24 h) — §2.1
 - [ ] Activer Google Sign-In + SHA-1 + web client ID (§3.2) si souhaité
 - [ ] Déployer `firestore.rules` (§3.1)
 - [ ] Créer le produit `remove_ads` (§4)
