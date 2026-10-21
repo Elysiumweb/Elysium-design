@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orbit Hop</string>
+
+    <!--
+      Web client ID Google (Firebase Console > Authentication > Sign-in method > Google).
+      Tant que ce champ est vide, seul l'auth e-mail/mot de passe est actif ;
+      le bouton Google affiche un message explicite. Voir README.
+    -->
+    <string name="google_web_client_id" translatable="false"></string>
+</resources>

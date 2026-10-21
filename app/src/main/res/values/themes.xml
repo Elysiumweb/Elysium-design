@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Thème applicatif : l'interface est dessinée par Jetpack Compose -->
+    <style name="Theme.OrbitHop" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/cosmic_navy</item>
+        <item name="android:statusBarColor">@color/cosmic_navy_deep</item>
+        <item name="android:navigationBarColor">@color/cosmic_navy_deep</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
