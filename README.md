@@ -143,6 +143,9 @@ embarqué dans l'app Android (il est ignoré par `.gitignore`). Il ne sert qu'à
 - [ ] Déployer `firestore.rules` (§3.1)
 - [ ] Créer le produit `remove_ads` (§4)
 - [x] URLs légales intégrées dans `SettingsScreen.kt` et publiées en ligne (GitHub Pages)
+- [x] Suppression de compte : in-app (Paramètres → Supprimer mon compte) + page web
+   (`https://elysiumweb.github.io/Orbit-Hop/suppression-de-compte.html`) à coller dans
+   Play Console > Sécurité des données > URL de suppression de compte
 - [ ] Configurer le **keystore de signature** (App signing Play) dans `app/build.gradle.kts`
 - [ ] Remplir la fiche **Data safety** : données collectées (e-mail, identifiant publicitaire,
    score), finalité (fonctionnement de l'app, analytique, publicité), chiffrement en transit

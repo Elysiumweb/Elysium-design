@@ -121,4 +121,28 @@ object AuthRepository {
         FirestoreRepository.onSignedIn(user.uid, name, newState.email)
         newState
     }
+
+    /**
+     * Suppression du compte et des données associées (exigence Play « Account deletion »).
+     * Supprime d'abord les données Firestore (profil + scores), puis le compte Firebase Auth.
+     * En cas de « connexion récente requise », invite l'utilisateur à se reconnecter.
+     */
+    suspend fun deleteAccountAndData(): Result<Unit> = runCatching {
+        val user = FirebaseAuth.getInstance().currentUser
+            ?: error("NO_ACCOUNT")
+        FirestoreRepository.deleteAccountData(user.uid)
+        try {
+            user.delete().await()
+        } catch (e: Exception) {
+            if (e is com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException ||
+                e.message?.contains("recent", ignoreCase = true) == true
+            ) {
+                error("RECENT_LOGIN_REQUIRED")
+            } else {
+                throw e
+            }
+        }
+        LocalStore.resetForNewAccount()
+        state = AuthState.Guest
+    }
 }

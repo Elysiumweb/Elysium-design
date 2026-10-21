@@ -119,4 +119,21 @@ object FirestoreRepository {
                 emptyList()
             }
         }
+
+    /**
+     * Supprime toutes les données Firestore d'un compte (suppression de compte) :
+     * entrées du classement puis document profil.
+     */
+    suspend fun deleteAccountData(uid: String) {
+        withContext(Dispatchers.IO) {
+            val scores = db.collection("scores")
+                .whereEqualTo("uid", uid)
+                .get()
+                .await()
+            for (doc in scores.documents) {
+                doc.reference.delete().await()
+            }
+            db.collection("users").document(uid).delete().await()
+        }
+    }
 }

@@ -19,7 +19,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,22 +36,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elysium.orbithop.ads.ConsentManager
+import com.elysium.orbithop.core.auth.AuthRepository
+import com.elysium.orbithop.core.auth.AuthState
 import com.elysium.orbithop.core.i18n.Locales
 import com.elysium.orbithop.core.store.LocalStore
 import com.elysium.orbithop.core.util.Feedback
 import com.elysium.orbithop.ui.components.GhostButton
 import com.elysium.orbithop.ui.components.InfoRow
 import com.elysium.orbithop.ui.components.SectionTitle
+import kotlinx.coroutines.launch
 import com.elysium.orbithop.ui.theme.StarYellow
 
 /** URLs légales — hébergées via GitHub Pages (dossier docs/). */
 private const val PRIVACY_URL = "https://elysiumweb.github.io/Orbit-Hop/politique-de-confidentialite.html"
 private const val TERMS_URL = "https://elysiumweb.github.io/Orbit-Hop/conditions-utilisation.html"
+private const val DELETION_URL = "https://elysiumweb.github.io/Orbit-Hop/suppression-de-compte.html"
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val activity = context as? Activity
+    val scope = rememberCoroutineScope()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var deleting by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -142,6 +156,25 @@ fun SettingsScreen(onBack: () -> Unit) {
         }
 
         Spacer(modifier = Modifier.height(18.dp))
+        SectionTitle(text = Locales.t("account_delete"), modifier = Modifier.fillMaxWidth())
+        GhostButton(
+            text = Locales.t("account_delete_info"),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            openUrl(context, DELETION_URL)
+        }
+        if (AuthRepository.state is AuthState.SignedIn) {
+            Spacer(modifier = Modifier.height(8.dp))
+            GhostButton(
+                text = Locales.t("account_delete"),
+                enabled = !deleting,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                showDeleteDialog = true
+            }
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
         SectionTitle(text = Locales.t("about", "1.0.0"), modifier = Modifier.fillMaxWidth())
         GhostButton(text = Locales.t("privacy"), modifier = Modifier.fillMaxWidth()) {
             openUrl(context, PRIVACY_URL)
@@ -159,6 +192,57 @@ fun SettingsScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(18.dp))
         InfoRow(left = Locales.t("version", "1.0.0 (1)"), right = "com.elysium.orbithop")
         Spacer(modifier = Modifier.height(20.dp))
+    }
+
+    // ---- Confirmation de suppression du compte ----
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { if (!deleting) showDeleteDialog = false },
+            title = { Text(Locales.t("account_delete"), fontWeight = FontWeight.Black) },
+            text = { Text(Locales.t("account_delete_confirm")) },
+            confirmButton = {
+                TextButton(
+                    enabled = !deleting,
+                    onClick = {
+                        deleting = true
+                        scope.launch {
+                            AuthRepository.deleteAccountAndData()
+                                .onSuccess {
+                                    showDeleteDialog = false
+                                    deleting = false
+                                    Toast.makeText(
+                                        context,
+                                        Locales.t("account_delete_success"),
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    onBack()
+                                }
+                                .onFailure { error ->
+                                    deleting = false
+                                    val message = when (error.message) {
+                                        "NO_ACCOUNT" -> Locales.t("account_delete_guest")
+                                        "RECENT_LOGIN_REQUIRED" -> Locales.t("account_delete_relogin")
+                                        else -> Locales.t(
+                                            "account_delete_error",
+                                            error.message ?: "?"
+                                        )
+                                    }
+                                    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                                }
+                        }
+                    }
+                ) { Text(Locales.t("ok"), color = Color(0xFFE05B3E)) }
+            },
+            dismissButton = {
+                TextButton(
+                    enabled = !deleting,
+                    onClick = { showDeleteDialog = false }
+                ) { Text(Locales.t("cancel")) }
+            },
+            containerColor = Color(0xFF1B2A55),
+            titleContentColor = Color(0xFFF7F3E8),
+            textContentColor = Color(0xFFA9B4D0)
+        )
     }
 }
 

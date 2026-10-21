@@ -30,6 +30,7 @@ service cloud.firestore {
 
     // Profil joueur : lecture pour tout utilisateur connecté (classement),
     // écriture réservée au propriétaire, champs strictement définis.
+    // La suppression par le propriétaire est autorisée (suppression de compte in-app).
     match /users/{uid} {
       allow read: if isSignedIn();
       allow create: if isOwner(uid)
@@ -48,10 +49,11 @@ service cloud.firestore {
         && request.resource.data.bestScore is int
         && request.resource.data.bestScore >= 0
         && request.resource.data.bestScore <= 2000000;
-      allow delete: if false;
+      allow delete: if isOwner(uid);
     }
 
     // Classement : soumission d'un score par son propriétaire, aucune modification.
+    // Le propriétaire peut supprimer ses propres entrées (suppression de compte).
     match /scores/{docId} {
       allow read: if isSignedIn();
       allow create: if isSignedIn()
@@ -65,7 +67,8 @@ service cloud.firestore {
         && request.resource.data.skin >= 0
         && request.resource.data.skin <= 100
         && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
     }
 
     // Tout le reste est refusé.
