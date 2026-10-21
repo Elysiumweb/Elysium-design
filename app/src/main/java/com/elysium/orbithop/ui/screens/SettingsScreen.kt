@@ -37,9 +37,9 @@ import com.elysium.orbithop.ui.components.InfoRow
 import com.elysium.orbithop.ui.components.SectionTitle
 import com.elysium.orbithop.ui.theme.StarYellow
 
-/** URL légales — à remplacer par les vôtres avant la publication (voir README). */
-private const val PRIVACY_URL = "https://elysiumweb.github.io/orbit-hop/politique-de-confidentialite.html"
-private const val TERMS_URL = "https://elysiumweb.github.io/orbit-hop/conditions-utilisation.html"
+/** URLs légales — hébergées via GitHub Pages (dossier docs/). */
+private const val PRIVACY_URL = "https://elysiumweb.github.io/Orbit-Hop/politique-de-confidentialite.html"
+private const val TERMS_URL = "https://elysiumweb.github.io/Orbit-Hop/conditions-utilisation.html"
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {

@@ -137,10 +137,12 @@ embarqué dans l'app Android (il est ignoré par `.gitignore`). Il ne sert qu'à
    dans AdMob (onglet app-ads.txt, ~24 h) — §2.1
 - [x] Google Sign-In activé (§3.2) — ajouter le SHA-1 du keystore release + nouveau
    `google-services.json` avant la mise en ligne
+- [x] URLs légales en ligne (GitHub Pages) : politique de confidentialité + CGU
+   (`https://elysiumweb.github.io/Orbit-Hop/politique-de-confidentialite.html`) — à coller
+   dans Play Console > Règles de confidentialité
 - [ ] Déployer `firestore.rules` (§3.1)
 - [ ] Créer le produit `remove_ads` (§4)
-- [ ] Remplacer les URLs légales dans `SettingsScreen.kt` (`PRIVACY_URL`, `TERMS_URL`)
-   et publier la politique de confidentialité (modèle : `docs/politique-de-confidentialite.md`)
+- [x] URLs légales intégrées dans `SettingsScreen.kt` et publiées en ligne (GitHub Pages)
 - [ ] Configurer le **keystore de signature** (App signing Play) dans `app/build.gradle.kts`
 - [ ] Remplir la fiche **Data safety** : données collectées (e-mail, identifiant publicitaire,
    score), finalité (fonctionnement de l'app, analytique, publicité), chiffrement en transit
