@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orbit Hop</string>
+
+    <!--
+      Web client ID Google (Firebase Console > Authentication > Sign-in method > Google).
+      Configuré : le bouton Google est actif.
+    -->
+    <string name="google_web_client_id" translatable="false">202208605466-9pe1kuq1kknnjaouhl9hi7dhml6m30r6.apps.googleusercontent.com</string>
+</resources>

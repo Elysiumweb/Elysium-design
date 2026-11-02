@@ -1,0 +1,25 @@
+# Gradle / Android Studio
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Fichiers locaux sensibles
+# (la clé de service Firebase Admin ne doit JAMAIS être versionnée ni embarquée dans l'app)
+*firebase-adminsdk*.json
+service-account*.json
+
+# Logs et OS
+*.log
+.DS_Store
+
+# Répertoires d'outils
+.kotlin/

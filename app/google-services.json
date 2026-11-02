@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "202208605466",
+    "project_id": "orbit-hop-262a1",
+    "storage_bucket": "orbit-hop-262a1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202208605466:android:90bcf232fbf9fbe251a8a3",
+        "android_client_info": {
+          "package_name": "com.elysium.orbithop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202208605466-72rcopuf04f7ooncae1evud77ohih53k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elysium.orbithop",
+            "certificate_hash": "ba5d236035f89c0240e74ab0e6a87a593474d691"
+          }
+        },
+        {
+          "client_id": "202208605466-9pe1kuq1kknnjaouhl9hi7dhml6m30r6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzX8PKcnAVg3w0M6LE8P1JgBa-lIPiIVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202208605466-9pe1kuq1kknnjaouhl9hi7dhml6m30r6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,79 @@
+rules_version = '2';
+
+// Règles Cloud Firestore — Orbit Hop
+// Politique : chaque joueur n'écrit que sur SON document ; le classement est
+// public en lecture pour les utilisateurs authentifiés, écriture validée
+// (champs bornés, score plafonné, propriétaire uniquement).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function validName() {
+      return request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 24;
+    }
+
+    function validScore() {
+      return request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.score <= 2000000;
+    }
+
+    // Profil joueur : lecture pour tout utilisateur connecté (classement),
+    // écriture réservée au propriétaire, champs strictement définis.
+    // La suppression par le propriétaire est autorisée (suppression de compte in-app).
+    match /users/{uid} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(uid)
+        && validName()
+        && request.resource.data.keys().hasOnly(
+             ['name', 'email', 'stars', 'bestScore', 'gamesPlayed', 'equippedSkin',
+              'unlockedSkins', 'removeAds', 'sound', 'vibration', 'lang',
+              'createdAt', 'updatedAt']);
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+             ['name', 'stars', 'bestScore', 'gamesPlayed', 'equippedSkin',
+              'unlockedSkins', 'removeAds', 'sound', 'vibration', 'lang', 'updatedAt'])
+        && request.resource.data.stars is int
+        && request.resource.data.stars >= 0
+        && request.resource.data.stars <= 50000000
+        && request.resource.data.bestScore is int
+        && request.resource.data.bestScore >= 0
+        && request.resource.data.bestScore <= 2000000;
+      allow delete: if isOwner(uid);
+    }
+
+    // Classement : soumission d'un score par son propriétaire, aucune modification.
+    // Le propriétaire peut supprimer ses propres entrées (suppression de compte).
+    match /scores/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && request.resource.data.uid == request.auth.uid
+        && validName()
+        && validScore()
+        && request.resource.data.stars is int
+        && request.resource.data.stars >= 0
+        && request.resource.data.stars <= 100000
+        && request.resource.data.skin is int
+        && request.resource.data.skin >= 0
+        && request.resource.data.skin <= 100
+        && request.resource.data.createdAt == request.time;
+      allow update: if false;
+      allow delete: if isSignedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // Tout le reste est refusé.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
